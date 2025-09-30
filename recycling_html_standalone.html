@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punto de Acopio - Sistema de Reciclaje</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 8px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 14px;
+            background: #f3f4f6;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 15px;
+            color: #374151;
+        }
+
+        .tab-button:hover {
+            background: #e5e7eb;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .points-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .points-display .label {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .points-display .value {
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .points-display .user-name {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .success-message {
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 20px;
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #6ee7b7;
+            display: none;
+            animation: slideIn 0.3s;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .history {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .history h3 {
+            color: #374151;
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        .transaction {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-type {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 4px;
+            text-transform: capitalize;
+        }
+
+        .transaction-details {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .transaction-points {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 24px;
+        }
+
+        .stats {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px 20px;
+            color: #9ca3af;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .points-display .value {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 Punto de Acopio</h1>
+        <p class="subtitle">Sistema de Registro de Residuos Reciclables</p>
+
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="showTab('register')">Registrar</button>
+            <button class="tab-button" onclick="showTab('consult')">Consultar</button>
+        </div>
+
+        <!-- Tab de Registro -->
+        <div id="register-tab" class="tab-content active">
+            <div class="form-group">
+                <label for="cedula">Número de Cédula</label>
+                <input type="text" id="cedula" placeholder="Ej: 1234567890">
+            </div>
+
+            <div class="form-group">
+                <label for="nombre">Nombre Completo</label>
+                <input type="text" id="nombre" placeholder="Nombre del usuario">
+            </div>
+
+            <div class="form-group">
+                <label for="tipoResiduo">Tipo de Residuo</label>
+                <select id="tipoResiduo" onchange="calcularPuntos()">
+                    <option value="">Seleccione...</option>
+                    <option value="plastico">Plástico (10 pts/kg)</option>
+                    <option value="papel">Papel/Cartón (5 pts/kg)</option>
+                    <option value="vidrio">Vidrio (8 pts/kg)</option>
+                    <option value="metal">Metal (15 pts/kg)</option>
+                    <option value="electronico">Electrónico (20 pts/kg)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="peso">Peso (kg)</label>
+                <input type="number" id="peso" step="0.1" min="0.1" placeholder="0.0" oninput="calcularPuntos()">
+            </div>
+
+            <div class="points-display">
+                <div class="label">Puntos a Otorgar</div>
+                <div class="value" id="puntosCalculados">0</div>
+            </div>
+
+            <button onclick="registrarEntrega()">Registrar Entrega</button>
+
+            <div class="success-message" id="successMessage"></div>
+        </div>
+
+        <!-- Tab de Consulta -->
+        <div id="consult-tab" class="tab-content">
+            <div class="form-group">
+                <label for="cedulaConsulta">Número de Cédula</label>
+                <input type="text" id="cedulaConsulta" placeholder="Ej: 1234567890">
+            </div>
+            <button onclick="consultarPuntos()">Consultar Puntos</button>
+
+            <div id="consultaResult" style="display:none;">
+                <div class="points-display">
+                    <div class="label">Puntos Totales</div>
+                    <div class="value" id="puntosUsuario">0</div>
+                    <div class="user-name" id="nombreUsuario"></div>
+                </div>
+
+                <div class="history">
+                    <h3>📋 Historial Reciente</h3>
+                    <div id="historialTransacciones"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            📊 Usuarios registrados: <span id="totalUsuarios">0</span> | 
+            Transacciones: <span id="totalTransacciones">0</span>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de almacenamiento persistente usando localStorage
+        let usuarios = {};
+        let transacciones = [];
+
+        // Cargar datos al iniciar
+        window.onload = function() {
+            cargarDatos();
+            actualizarEstadisticas();
+        };
+
+        function cargarDatos() {
+            try {
+                const usuariosGuardados = localStorage.getItem('recyclingUsers');
+                const transaccionesGuardadas = localStorage.getItem('recyclingTransactions');
+                
+                if (usuariosGuardados) usuarios = JSON.parse(usuariosGuardados);
+                if (transaccionesGuardadas) transacciones = JSON.parse(transaccionesGuardadas);
+            } catch (e) {
+                console.log('No se pudieron cargar datos previos');
+            }
+        }
+
+        function guardarDatos() {
+            try {
+                localStorage.setItem('recyclingUsers', JSON.stringify(usuarios));
+                localStorage.setItem('recyclingTransactions', JSON.stringify(transacciones));
+            } catch (e) {
+                console.log('No se pudieron guardar los datos');
+            }
+        }
+
+        // Tabla de conversión de puntos
+        const puntosXKg = {
+            'plastico': 10,
+            'papel': 5,
+            'vidrio': 8,
+            'metal': 15,
+            'electronico': 20
+        };
+
+        function calcularPuntos() {
+            const peso = parseFloat(document.getElementById('peso').value) || 0;
+            const tipo = document.getElementById('tipoResiduo').value;
+            const puntos = tipo ? Math.round(peso * puntosXKg[tipo]) : 0;
+            document.getElementById('puntosCalculados').textContent = puntos;
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            
+            if (tab === 'register') {
+                document.getElementById('register-tab').classList.add('active');
+                document.querySelectorAll('.tab-button')[0].classList.add('active');
+            } else {
+                document.getElementById('consult-tab').classList.add('active');
+                document.querySelectorAll('.tab-button')[1].classList.add('active');
+            }
+        }
+
+        function registrarEntrega() {
+            const cedula = document.getElementById('cedula').value.trim();
+            const nombre = document.getElementById('nombre').value.trim();
+            const tipoResiduo = document.getElementById('tipoResiduo').value;
+            const peso = parseFloat(document.getElementById('peso').value);
+
+            if (!cedula || !nombre || !tipoResiduo || !peso) {
+                alert('Por favor complete todos los campos');
+                return;
+            }
+
+            const puntos = Math.round(peso * puntosXKg[tipoResiduo]);
+
+            // Crear o actualizar usuario
+            if (!usuarios[cedula]) {
+                usuarios[cedula] = {
+                    nombre: nombre,
+                    puntosTotales: 0,
+                    transacciones: []
+                };
+            }
+
+            usuarios[cedula].puntosTotales += puntos;
+
+            const transaccion = {
+                fecha: new Date().toLocaleString('es-CO'),
+                tipo: tipoResiduo,
+                peso: peso,
+                puntos: puntos
+            };
+
+            usuarios[cedula].transacciones.unshift(transaccion);
+            transacciones.unshift({ cedula, ...transaccion, nombre });
+
+            // Guardar en localStorage
+            guardarDatos();
+
+            // Mostrar mensaje de éxito
+            const successMsg = document.getElementById('successMessage');
+            successMsg.textContent = `✅ ¡Registro exitoso! ${puntos} puntos otorgados a ${nombre}`;
+            successMsg.classList.add('show');
+
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 5000);
+
+            // Limpiar formulario
+            document.getElementById('cedula').value = '';
+            document.getElementById('nombre').value = '';
+            document.getElementById('tipoResiduo').value = '';
+            document.getElementById('peso').value = '';
+            document.getElementById('puntosCalculados').textContent = '0';
+
+            actualizarEstadisticas();
+        }
+
+        function consultarPuntos() {
+            const cedula = document.getElementById('cedulaConsulta').value.trim();
+            
+            if (!cedula) {
+                alert('Por favor ingrese un número de cédula');
+                return;
+            }
+
+            const usuario = usuarios[cedula];
+            const resultado = document.getElementById('consultaResult');
+
+            if (usuario) {
+                document.getElementById('puntosUsuario').textContent = usuario.puntosTotales;
+                document.getElementById('nombreUsuario').textContent = usuario.nombre;
+                
+                const historial = document.getElementById('historialTransacciones');
+                historial.innerHTML = '';
+
+                if (usuario.transacciones.length > 0) {
+                    usuario.transacciones.slice(0, 5).forEach(t => {
+                        const div = document.createElement('div');
+                        div.className = 'transaction';
+                        div.innerHTML = `
+                            <div class="transaction-info">
+                                <div class="transaction-type">${t.tipo}</div>
+                                <div class="transaction-details">${t.fecha} - ${t.peso} kg</div>
+                            </div>
+                            <div class="transaction-points">+${t.puntos}</div>
+                        `;
+                        historial.appendChild(div);
+                    });
+                } else {
+                    historial.innerHTML = '<div class="no-data">No hay transacciones registradas</div>';
+                }
+
+                resultado.style.display = 'block';
+            } else {
+                alert('No se encontraron registros para esta cédula');
+                resultado.style.display = 'none';
+            }
+        }
+
+        function actualizarEstadisticas() {
+            document.getElementById('totalUsuarios').textContent = Object.keys(usuarios).length;
+            document.getElementById('totalTransacciones').textContent = transacciones.length;
+        }
+    </script>
+</body>
+</html>
